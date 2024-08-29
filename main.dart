@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/bloc.dart';
-import 'package:todo_app/dbhelper.dart';
+import 'package:todo_app/full_app/todo/bloc.dart';
+import 'package:todo_app/full_app/todo/dbhelper.dart';
 import 'package:todo_app/full_app/default/home.dart';
 import 'package:todo_app/full_app/default/profile.dart';
 import 'package:todo_app/full_app/default/sign.dart';
-import 'package:todo_app/gpt/bloc.dart';
-import 'package:todo_app/gpt/sign.dart';
+import 'package:todo_app/full_app/user/bloc.dart';
+import 'package:todo_app/full_app/user/sign.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todo_app/state.dart';
-import 'package:todo_app/ui.dart';
+import 'package:todo_app/full_app/todo/state.dart';
+import 'package:todo_app/full_app/todo/ui.dart';
 
 /*
 // this works in sign up without bloc add and update only
@@ -106,7 +106,13 @@ class MyApp extends StatelessWidget {
 } */
 
 //works with bloc and model only
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Check if the user is logged in
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
   final dbHelper = DatabaseHelper.instance;
 
   runApp(
@@ -119,10 +125,8 @@ void main() {
           create: (BuildContext context) => TodoBloc(dbHelper),
         ),
       ],
-      /* create: (context) =>
-          TodoBloc(dbHelper)..add(LoadTodos()),  */ //..add(LoadTodos()),
       child: MaterialApp(
-        home: SplashScreen(),
+        home: isLoggedIn ? const HomeScreen123() : SignUpScreen(),
       ),
     ),
   );
